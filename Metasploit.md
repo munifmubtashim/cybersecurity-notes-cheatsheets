@@ -185,4 +185,6 @@ unset PAYLOAD
 What command do you use to proceed with the exploitation phase?
 exploit
 
+# Metasploit: Exploitation
+
 
