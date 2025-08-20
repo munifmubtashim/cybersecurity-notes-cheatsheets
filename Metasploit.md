@@ -187,4 +187,44 @@ exploit
 
 # Metasploit: Exploitation
 
+###Port Scanning
+Metasploit has a number of modules to scan open ports on the target system and network. You can list potential port scanning modules available using the search portscan command.
+
+ ```bash
+msf6 > search portscan
+```
+Port scanning modules will require you to set a few options:
+```bash
+msf6 auxiliary(scanner/portscan/tcp) > show options
+
+Module options (auxiliary/scanner/portscan/tcp):
+
+   Name         Current Setting  Required  Description
+   ----         ---------------  --------  -----------
+   CONCURRENCY  10               yes       The number of concurrent ports to check per host
+   DELAY        0                yes       The delay between connections, per thread, in milliseconds
+   JITTER       0                yes       The delay jitter factor (maximum value by which to +/- DELAY) in milliseconds.
+   PORTS        1-10000          yes       Ports to scan (e.g. 22-25,80,110-900)
+   RHOSTS                        yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:'
+   THREADS      1                yes       The number of concurrent threads (max one per host)
+   TIMEOUT      1000             yes       The socket connect timeout in milliseconds
+
+msf6 auxiliary(scanner/portscan/tcp) >
+```
+CONCURRENCY: Number of targets to be scanned simultaneously.
+PORTS: Port range to be scanned. Please note that 1-1000 here will not be the same as using Nmap with the default configuration. Nmap will scan the 1000 most used ports, while Metasploit will scan port numbers from 1 to 10000.
+RHOSTS: Target or target network to be scanned.
+THREADS: Number of threads that will be used simultaneously. More threads will result in faster scans.
+
+You can directly perform Nmap scans from the msfconsole prompt as shown below faster:
+```bash
+msf6 > nmap -sS 10.10.12.229
+```
+### UDP service Identification
+The scanner/discovery/udp_sweep module will allow you to quickly identify services running over the UDP (User Datagram Protocol). As you can see below, this module will not conduct an extensive scan of all possible UDP services but does provide a quick way to identify services such as DNS or NetBIOS.
+```bash
+msf6 auxiliary(scanner/discovery/udp_sweep) > run
+```
+
+
 
