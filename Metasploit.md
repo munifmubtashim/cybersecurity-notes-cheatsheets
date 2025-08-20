@@ -186,6 +186,7 @@ What command do you use to proceed with the exploitation phase?
 exploit
 
 # Metasploit: Exploitation
+## Scanning
 
 ###Port Scanning
 Metasploit has a number of modules to scan open ports on the target system and network. You can list potential port scanning modules available using the search portscan command.
@@ -224,6 +225,98 @@ msf6 > nmap -sS 10.10.12.229
 The scanner/discovery/udp_sweep module will allow you to quickly identify services running over the UDP (User Datagram Protocol). As you can see below, this module will not conduct an extensive scan of all possible UDP services but does provide a quick way to identify services such as DNS or NetBIOS.
 ```bash
 msf6 auxiliary(scanner/discovery/udp_sweep) > run
+```
+
+### SMB Scans
+Metasploit offers several useful auxiliary modules that allow us to scan specific services. Below is an example for the SMB. Especially useful in a corporate network would be smb_enumshares and smb_version but please spend some time to identify scanners that the Metasploit version installed on your system offers.
+```bash
+msf6 auxiliary(scanner/smb/smb_version) > run
+```
+
+When scanning services, don’t overlook less common ones like NetBIOS, which can reveal system roles (e.g., CORP-DC, DEVOPS) and sometimes expose shared files or folders with weak/no passwords. Metasploit offers many modules to gather more information and identify vulnerabilities, so it’s useful to search for relevant ones during assessments.
+
+### Q&A
+
+How many ports are open on the target system?5
+```bash
+nmap sS (ip address)
+```
+
+Using the relevant scanner, what NetBIOS name can you see?ACME IT SUPPORT
+```bash
+use auxiliary/scanner/http/http_version
+show options
+set RHOSTS (ip address)
+run
+```
+
+What is running on port 8000?webfs/1.21
+```bash
+use auxiliary/scanner/http/http_version
+show options
+set RHOSTS 10.10.10.5
+run
+```
+
+What is the "penny" user's SMB password? Use the wordlist mentioned in the previous task.leo1234
+```bash
+use auxiliary/scanner/smb/smb_login
+set RHOSTS 10.10.48.113
+set SMBUser penny
+set PASS_FILE /usr/share/wordlists/MetasploitRoom/MetasploitWordlist.txt 
+run
+```
+## The Metasploit Database
+
+Start PostgreSQL:
+**systemctl start postgresql**
+
+Initialize the Metasploit database:
+**msfdb init**
+
+Running as root shows: “Please run msfdb as a non-root user.”
+Fix:
+**sudo -u postgres msfdb init**
+
+(Optional) If you want to redo setup, delete the existing database first:
+**sudo -u postgres msfdb delete**
+
+# Metasploit Quick Reference Table
+
+| Task / Command                  | Description |
+|---------------------------------|------------|
+| `msfconsole`                     | Launch Metasploit |
+| `db_status`                      | Check database connection |
+| `workspace`                      | List workspaces |
+| `workspace -a <name>`            | Add new workspace |
+| `workspace <name>`               | Switch workspace |
+| `workspace -d <name>`            | Delete workspace |
+| `hosts`                           | List all hosts in DB |
+| `services`                        | List all services |
+| `services -S <name>`              | Filter services (e.g., netbios) |
+| `vulns`                            | List vulnerabilities |
+| `db_nmap -sV -p- <IP>`            | Nmap scan, save results to DB |
+| `hosts -R`                         | Assign RHOSTS from saved hosts |
+| `use auxiliary/scanner/smb/smb_ms17_010` | Scan for MS17-010 vuln |
+| `show options`                     | Show module options |
+| `run`                              | Execute module/exploit |
+
+**Tips:**
+- Use **workspaces** to isolate projects.
+- Use **db_nmap** to save scan results automatically.
+- Focus on **HTTP, FTP, SMB, SSH, RDP** for common vulnerabilities.
+
+## Vulnerability Scanning
+```bash
+use auxiliary/scanner/vnc/vnc_login
+info
+```
+Who wrote the module that allows us to check SMTP servers for open relay?Campbell Murray
+
+```bash
+search type:auxiliary smtp open
+use auxiliary/scanner/smtp/smtp_relay 
+info
 ```
 
 
