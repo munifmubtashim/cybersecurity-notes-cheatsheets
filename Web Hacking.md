@@ -900,15 +900,346 @@ Minifying and obfuscating JS code reduces its size, improves load time, and make
 
 
 
+# SQL Fundamentals
+
+##  Introduction to Databases
+
+###  What is a Database?
+A **database** is an organised collection of **structured information (data)** that is:
+- Easily accessible  
+- Can be manipulated  
+- Can be analysed  
+
+---
+
+###  Real-World Uses
+Databases store and manage data in many systems you use daily:  
+- **Authentication Data** → usernames & passwords (e.g., login systems)  
+- **Social Media Data** → posts, comments, likes (e.g., Instagram, Facebook)  
+- **Streaming Services** → watch history & recommendations (e.g., Netflix)  
+
+---
+
+###  Why Are They Important?
+- Used by **large-scale companies** (social media, streaming, banks)  
+- Also by **small businesses** → for storing customer, sales, or product data  
+- Critical for any application that needs **data storage & retrieval**  
+
+## Database Basics
+
+### What is a Database?
+A **database** is an organised collection of structured information (data) that can be:
+- Stored
+- Accessed
+- Managed
+- Updated efficiently
+
+Databases are used everywhere:
+- **Authentication**: login credentials like usernames and passwords
+- **Social Media**: posts, comments, likes
+- **Streaming**: user preferences, watch history
+- **Business**: inventory, customer and sales records
+
+---
+
+### Types of Databases
+
+### Relational Databases (SQL)
+- Store **structured data** in tables (rows & columns)  
+- Use a **schema** (predefined structure)  
+- Support **relationships** between tables  
+- Great for: e-commerce, banking, enterprise systems  
+
+Example (table format):
+
+| id | first_name | last_name | email             |
+|----|------------|-----------|-------------------|
+| 1  | Alice      | Smith     | alice@email.com   |
+
+---
+
+### Non-Relational Databases (NoSQL)
+- Store data in **non-tabular** formats (documents, key-value, graphs, column stores)  
+- More **flexible**, handles unstructured or varied data  
+- Great for: social media, IoT, analytics, big data  
+
+Example (document format):
+```json
+{
+  "_id": "4556712cd2b2397ce1b47661",
+  "name": { "first": "Thomas", "last": "Anderson" },
+  "date_of_birth": "1964-09-02",
+  "occupation": ["The One"],
+  "steps_taken": 4738947387743977493
+}
+```
+## Data Types
+
+- **String** → text (e.g., names, emails)  
+- **Integer** → whole numbers (e.g., quantity, age)  
+- **Float/Decimal** → numbers with decimals (e.g., price)  
+- **Date/Time** → timestamps (e.g., created_at, updated_at)  
+
+---
+
+## Keys
+
+### Primary Key
+- A unique identifier for each row in a table  
+- Prevents duplicate entries  
+- Example: `id` column in `Books`  
+
+### Foreign Key
+- A column that references a Primary Key in another table  
+- Creates relationships between tables  
+- Example: `author_id` in `Books` → links to `id` in `Authors`  
+
+---
+
+### SQL vs NoSQL (Quick Comparison)
+
+| Feature        | SQL (Relational)              | NoSQL (Non-Relational)        |
+|----------------|-------------------------------|-------------------------------|
+| Data Structure | Tables (rows & columns)       | Documents, key-value, graph   |
+| Schema         | Fixed, predefined             | Flexible, dynamic             |
+| Relationships  | Supports complex joins        | Typically limited/no joins    |
+| Best For       | Structured, consistent data   | Unstructured/varied data      |
+| Example Systems| MySQL, PostgreSQL, Oracle     | MongoDB, Cassandra, Redis     |
+
+---
+
+**Summary**
+
+- **Databases** store and organise data for easy access.  
+- **SQL (Relational)** = structured, reliable, relationships between data.  
+- **NoSQL (Non-Relational)** = flexible, scalable, handles diverse data.  
+- **Tables, Rows, Columns** → core of relational databases.  
+- **Primary & Foreign Keys** → ensure uniqueness and define relationships.  
+
+## SQL
+
+## What is SQL?
+
+Now, all of this theoretically sounds great, but in practice, how do databases work?  
+How would you go and make your first table and populate it with data? What would you use?  
+
+Databases are usually controlled using a **Database Management System (DBMS)**.  
+A DBMS serves as an interface between the end user and the database. It is a software program that allows users to retrieve, update, and manage the data being stored.  
+
+**Examples of DBMSs:** MySQL, MongoDB, Oracle Database, MariaDB  
+
+---
+
+## SQL and Databases
+
+The interaction between the end user and the database can be done using **SQL (Structured Query Language)**.  
+SQL is a programming language used to query, define, and manipulate the data stored in a **relational database**.  
+
+---
+
+## Benefits of SQL and Relational Databases
+
+- **Fast**: Relational databases can return massive batches of data almost instantaneously due to efficient storage and processing speeds.  
+- **Easy to Learn**: SQL is written in plain English, making it much easier to understand compared to many programming languages. Its readability helps users focus on functions and syntax.  
+- **Reliable**: Relational databases enforce strict structures, ensuring accuracy and consistency in stored data.  
+- **Flexible**: SQL offers extensive capabilities for querying databases, enabling efficient data analysis.  
+
+```bash
+user@kali$ mysql -u root -p
+```
+## Database Statements
+
+## CREATE DATABASE
+If a new database is needed, the first step is to create it using the `CREATE DATABASE` statement.
+
+**Syntax:**
+```sql
+CREATE DATABASE database_name;
+```
+
+### SHOW DATABASES
+
+After creating a database, you can view all available databases using SHOW DATABASES.
+
+Example:
+```sql
+SHOW DATABASES;
+```
+
+The returned list will include the new database as well as default ones such as:
+
+mysql
+
+information_schema
+
+performance_schema
+
+sys
+
+### USE DATABASE
+
+To interact with a specific database, set it as the active one using USE.
+
+Example:
+```sql
+USE thm_bookmarket_db;
+```
+### DROP DATABASE
+
+To remove a database that is no longer needed, use DROP DATABASE.
+
+Syntax:
+```sql
+DROP DATABASE database_name;
+```
+
+(Be careful — this will permanently delete the database and all its tables.)
+
+### Table Statements
+CREATE TABLE
+
+Once a database is active, you can create tables inside it using CREATE TABLE.
+
+Syntax:
+```sql
+CREATE TABLE table_name (
+    column1 data_type,
+    column2 data_type,
+    column3 data_type
+);
+```
+
+Example:
+```sql
+CREATE TABLE book_inventory (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_name VARCHAR(255) NOT NULL,
+    publication_date DATE
+);
+```
+
+book_id → INT, auto-incremented, primary key (unique identifier).
+
+book_name → VARCHAR(255), cannot be empty (NOT NULL).
+
+publication_date → DATE.
+
+### SHOW TABLES
+
+Lists all tables in the currently active database.
+
+Example:
+```sql
+SHOW TABLES;
+```
+### DESCRIBE
+
+Displays the structure of a table: columns, data types, keys, and constraints.
+
+Example:
+
+DESCRIBE book_inventory;
 
 
+Sample Output:
+```
++------------------+--------------+------+-----+---------+----------------+
+| Field            | Type         | Null | Key | Default | Extra          |
++------------------+--------------+------+-----+---------+----------------+
+| book_id          | int          | NO   | PRI | NULL    | auto_increment |
+| book_name        | varchar(255) | NO   |     | NULL    |                |
+| publication_date | date         | YES  |     | NULL    |                |
++------------------+--------------+------+-----+---------+----------------+
+````
+### ALTER TABLE
+
+Used to modify an existing table (add, rename, or remove columns).
+
+Example (adding a column):
+```sql
+ALTER TABLE book_inventory
+ADD page_count INT;
+```
+### DROP TABLE
+
+Removes a table from the database.
+
+Syntax:
+```sql
+DROP TABLE table_name;
+```
+
+---
+
+## Create Operation (INSERT)
+The Create operation will create new records in a table. In MySQL, this can be achieved by using the statement INSERT INTO, as shown below.
+```sql
+mysql> INSERT INTO books (id, name, published_date, description)
+```
+As we can observe, the INSERT INTO statement specifies a table, in this case, books, where you can add a new record; the columns id, name, published_date, and description are the records in the table. In this example, a new record with an id of  1, a name of "Android Security Internals", a published_date of "2014-10-14", and a description stating "Android Security Internals provides a complete understanding of the security internals of Android devices" was added.
+
+Note: This operation already exists in the database so there is no need to run the query.
+
+### Read Operation (SELECT)
+The Read operation, as the name suggests, is used to read or retrieve information from a table. We can fetch a column or all columns from a table with the SELECT statement, as shown in the next example.
+
+```sql
+mysql> SELECT * FROM books;
++----+----------------------------+----------------+------------------------------------------------------+
+| id | name                       | published_date | description                                          |
++----+----------------------------+----------------+------------------------------------------------------+
+|  1 | Android Security Internals | 2014-10-14     | An In-Depth Guide to Android's Security Architecture |
++----+----------------------------+----------------+------------------------------------------------------+
+
+1 row in set (0.00 sec)         
+```
+The above output SELECT statement is followed by an * symbol indicating that all columns should be retrieved, followed by the FROM clause and the table name, in this case, books.
+
+If we want to select a specific column like the name and description, we should specify them instead of the * symbol, as shown below.
+
+```sql
+mysql> SELECT name, description FROM books;
++----------------------------+------------------------------------------------------+
+| name                       | description                                          |
++----------------------------+------------------------------------------------------+
+| Android Security Internals | An In-Depth Guide to Android's Security Architecture |
++----------------------------+------------------------------------------------------+
+
+1 row in set (0.00 sec)         
+```
+### Update Operation (UPDATE)
+The Update operation modifies an existing record within a table, and the same statement, UPDATE, can be used for this.
+
+```sql
+mysql> UPDATE books
+    SET description = "An In-Depth Guide to Android's Security Architecture."
+    WHERE id = 1;
+
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0     
+```
+The UPDATE statement specifies the table, in this case, books, and then we can use SET followed by the column name we will update. The WHERE clause specifies which row to update when the clause is met, in this case, the one with id 1.
+
+### Delete Operation (DELETE)
+The delete operation removes records from a table. We can achieve this with the DELETE statement.
+
+Note: There is no need to run the query. Deleting this entry will affect the rest of the examples in the upcoming tasks.
+
+```sql
+mysql> DELETE FROM books WHERE id = 1;
+
+Query OK, 1 row affected (0.00 sec)    
+```
+Above, we can observe the DELETE statement followed by the FROM clause, which allows us to specify the table where the record will be removed, in this case, books, followed by the WHERE clause that indicates that it should be the one where the id is 1.
+
+### Summary
+In summary, CRUD operations results are fundamental for data operations and when interacting with databases. The statements associated with them are listed below.
+
+Create (INSERT statement) - Adds a new record to the table.
+Read (SELECT statement) - Retrieves record from the table.
+Update (UPDATE statement) - Modifies existing data in the table.
+Delete (DELETE statement) - Removes record from the table.
 
 
-
-
-
-
-
-
-
+SELECT * FROM hacking_tools WHERE category = 'Network intelligence' AND amount <100;
 
