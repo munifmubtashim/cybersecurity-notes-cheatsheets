@@ -1242,4 +1242,214 @@ Delete (DELETE statement) - Removes record from the table.
 
 
 SELECT * FROM hacking_tools WHERE category = 'Network intelligence' AND amount <100;
+# SQL Clauses: DISTINCT, GROUP BY, ORDER BY, HAVING
 
+We’ll use the **`books`** table from the database `thm_books`:
+
+```sql
+USE thm_books;
+SELECT * FROM books;
+id	name	published_date	description
+1	Android Security Internals	2014-10-14	An In-Depth Guide to Android's Security Architecture
+2	Bug Bounty Bootcamp	2021-11-16	The Guide to Finding and Reporting Web Vulnerabilities
+3	Car Hacker's Handbook	2016-02-25	A Guide for the Penetration Tester
+4	Designing Secure Software	2021-12-21	A Guide for Developers
+5	Ethical Hacking	2021-11-02	A Hands-on Introduction to Breaking In
+6	Ethical Hacking	2021-11-02	
+
+🔹 DISTINCT Clause
+Removes duplicate records from the query results.
+
+```sql
+
+SELECT DISTINCT name FROM books;
+Result:
+
+name
+Android Security Internals
+Bug Bounty Bootcamp
+Car Hacker's Handbook
+Designing Secure Software
+Ethical Hacking
+```
+🔹 GROUP BY Clause
+Used to aggregate data and group results, often with functions like COUNT, SUM, etc.
+
+```sql
+
+SELECT name, COUNT(*)
+FROM books
+GROUP BY name;
+Result:
+
+name	COUNT(*)
+Android Security Internals	1
+Bug Bounty Bootcamp	1
+Car Hacker's Handbook	1
+Designing Secure Software	1
+Ethical Hacking	2
+```
+🔹 ORDER BY Clause
+Sorts results in ascending (ASC) or descending (DESC) order.
+
+Ascending Order:
+
+```sql
+
+SELECT * 
+FROM books
+ORDER BY published_date ASC;
+Descending Order:
+```
+```sql
+
+SELECT * 
+FROM books
+ORDER BY published_date DESC;
+🔹 HAVING Clause
+Filters aggregated results (unlike WHERE, which filters before aggregation).
+```
+```sql
+
+SELECT name, COUNT(*)
+FROM books
+GROUP BY name
+HAVING name LIKE '%Hack%';
+Result:
+
+name	COUNT(*)
+Car Hacker's Handbook	1
+Ethical Hacking	2
+```
+### Summary 
+Clause	Purpose	Example
+DISTINCT	Removes duplicate records	SELECT DISTINCT name FROM books;
+GROUP BY	Groups rows for aggregation	SELECT name, COUNT(*) FROM books GROUP BY name;
+ORDER BY	Sorts query results (ASC/DESC)	SELECT * FROM books ORDER BY published_date DESC;
+HAVING	Filters aggregated results	SELECT name, COUNT(*) FROM books GROUP BY name HAVING COUNT(*) > 1;
+
+# SQL Functions: String & Aggregate Functions
+
+When working with data, functions can help us streamline queries and operations and manipulate data. Let's explore some of these functions next.
+
+---
+
+## 🔹 String Functions
+
+String functions perform operations on a string, returning a value associated with it.
+
+### 1. `CONCAT()` Function
+This function is used to add two or more strings together. It is useful to combine text from different columns.
+
+```sql
+SELECT CONCAT(name, " is a type of ", category, " book.") AS book_info 
+FROM books;
+Result:
+
+book_info
+Android Security Internals is a type of Defensive Security book.
+Bug Bounty Bootcamp is a type of Offensive Security book.
+Car Hacker's Handbook is a type of Offensive Security book.
+Designing Secure Software is a type of Defensive Security book.
+Ethical Hacking is a type of Offensive Security book.
+```
+2. GROUP_CONCAT() Function
+This function concatenates data from multiple rows into one field.
+
+```sql
+
+SELECT category, GROUP_CONCAT(name SEPARATOR ", ") AS books
+FROM books
+GROUP BY category;
+Result:
+
+category	books
+Defensive Security	Android Security Internals, Designing Secure Software
+Offensive Security	Bug Bounty Bootcamp, Car Hacker's Handbook, Ethical Hacking
+```
+3. SUBSTRING() Function
+Retrieves a substring from a string, starting at a determined position.
+
+```sql
+
+SELECT SUBSTRING(published_date, 1, 4) AS published_year 
+FROM books;
+Result:
+
+published_year
+2014
+2021
+2016
+2021
+2021
+```
+4. LENGTH() Function
+Returns the number of characters in a string (including spaces and punctuation).
+
+```sql
+
+SELECT LENGTH(name) AS name_length 
+FROM books;
+Result:
+
+name_length
+26
+19
+21
+25
+15
+```
+🔹 Aggregate Functions
+These functions aggregate the value of multiple rows within one specified criteria in the query; they can combine multiple values into one result.
+
+1. COUNT() Function
+Returns the number of records.
+
+```sql
+
+SELECT COUNT(*) AS total_books 
+FROM books;
+Result:
+
+total_books
+5
+```
+2. SUM() Function
+Sums all values (ignoring NULL) of a column.
+
+```sql
+
+SELECT SUM(price) AS total_price 
+FROM books;
+Result:
+
+total_price
+249.95
+```
+3. MAX() Function
+Calculates the maximum value.
+
+```sql
+
+SELECT MAX(published_date) AS latest_book 
+FROM books;
+Result:
+
+latest_book
+2021-12-21
+```
+4. MIN() Function
+Calculates the minimum value.
+
+```sql
+
+SELECT MIN(published_date) AS earliest_book 
+FROM books;
+Result:
+
+earliest_book
+2014-10-14
+```
+
+
+---
