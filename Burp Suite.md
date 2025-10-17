@@ -1,5 +1,5 @@
 # What is Burp Suite ?
-Burp Suite is Java based freamework designed to serve as a comprehensive solution for conducting web application penetration testing.It captures and enables manipulation of all the HTTP?HTTPS traffic between a browser and a web server.
+Burp Suite is Java based framework designed to serve as a comprehensive solution for conducting web application penetration testing.It captures and enables manipulation of all the HTTP?HTTPS traffic between a browser and a web server.
 
 ---
 Burp Suite is an integrated platform for performing security testing of web applications. It includes various tools for scanning, fuzzing, intercepting, and analysing web traffic. It is used by security professionals worldwide to find and exploit vulnerabilities in web applications.
