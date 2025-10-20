@@ -32,3 +32,49 @@ Look at other users' notes. What is the flag? flag{fivefourthree}
 
 # Cryptographic Failures
 
+Cryptographic failures happen when applications misuse or skip proper encryption, causing sensitive data to be exposed—either while it’s being sent over the network (data in transit) or when it’s stored on servers (data at rest). For example, a webmail service must encrypt browser-server traffic so eavesdroppers can’t read messages, and ideally encrypt stored emails so even the provider can’t read them; if encryption is weak or absent an attacker (or a man-in-the-middle) can intercept or access usernames, passwords, financial data, DOBs, etc. In short: always use strong, well-tested cryptography correctly to protect confidentiality and prevent simple or advanced attacks.
+ 
+ ### Metarial 01
+ The most common (and simplest) format of a flat-file database is an SQLite database. These can be interacted with in most programming languages and have a dedicated client for querying them on the command line. This client is called **sqlite3** and is installed on many Linux distributions by default.
+
+ To access it, we use 
+ ```sql
+sqlite3 <database-name>
+```
+From here, we can see the tables in the database by using the **.tables** command:
+```bash
+┌──(codex㉿kali)-[~]
+└─$ sqlite3 database.db
+SQLite version 3.46.1 2024-08-13 09:16:08
+Enter ".help" for usage hints.
+sqlite> .tables
+sqlite> CREATE TABLE USERS ( id INTEGER PRIMARY KEY , name TEXT , email TEXT );
+sqlite> .tables
+USERS
+
+```
+
+At this point, we can dump all the data from the table, but we won't necessarily know what each column means unless we look at the table information. First, let's use **PRAGMA table_info(USERS);** to see the table information. Then we'll use **SELECT * FROM USERS;** to dump the information from the table:
+
+```bash
+┌──(codex㉿kali)-[~]
+└─$ sqlite3 database.db
+SQLite version 3.46.1 2024-08-13 09:16:08
+Enter ".help" for usage hints.
+sqlite> .tables
+USERS
+sqlite> PRAGMA table_info(USERS);
+0|id|INTEGER|0||1
+1|name|TEXT|0||0
+2|email|TEXT|0||0
+sqlite> SELECT * FROM USERS;
+1|Codex|codex@gmail.com
+sqlite> 
+```
+### Material 02
+
+When it comes to hash cracking, Kali comes pre-installed with various tools. If you know how to use these, then feel free to do so; however, they are outwith the scope of this material.
+
+Instead, we will be using the online tool: https://crackstation.net/ This website is extremely good at cracking weak password hashes. For more complicated hashes, we would need more sophisticated tools; however, all of the crackable password hashes used in today's challenge are weak MD5 hashes, which Crackstation should handle very nicely.
+
+
