@@ -26,7 +26,8 @@
 
 ## 2. System & Network Info  
 - `whoami` → show current user  
-- `id` → show UID & groups  
+- `id` → show UID & groups
+- `getent passwd`→ users exist on your Linux system.
 - `ifconfig` or `ip a` → show network interfaces  
 - `ping target.com` → test connectivity  
 - `curl http://site.com` → fetch webpage  
