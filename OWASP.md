@@ -90,7 +90,76 @@ What is the admin's plaintext password?qwertyuiop
 
 Log in as the admin. What is the flag THM{Yzc2YjdkMjE5N2VjMzNhOTE3NjdiMjdl}
 
+## Injection
+
+Definition: Occur when user input is interpreted as commands or queries by an application.
+
+Examples:
+
+- SQL Injection: Injecting SQL code into queries → access, modify, delete database data.
+
+- Command Injection: Injecting system commands → execute arbitrary commands on server.
+
+Prevention:
+
+- Allow list validation: Accept only predefined safe inputs.
+
+- Input sanitization: Remove or escape dangerous characters.
+
+- Use secure libraries/frameworks: Prevent direct execution of user input.
+
+## Command Injection
 
 
+Occurs when server-side code (e.g., PHP, Python, Node) passes user-controlled input into a function that runs shell/OS commands. An attacker can then craft input that the application executes on the server, effectively running arbitrary OS commands.
+
+**Why it’s dangerous:**
+
+- Attacker can list/read/write files, escalate privileges, pivot to other systems, exfiltrate data, or install
+ malware — basically full control comparable to a shell on the server.
+
+**Code Example**
+
+Let's consider a scenario: MooCorp has started developing a web-based application for cow ASCII art with customisable text. While searching for ways to implement their app, they've come across the cowsay command in Linux, which does just that! Instead of coding a whole web application and the logic required to make cows talk in ASCII, they decide to write some simple code that calls the cowsay command from the operating system's console and sends back its contents to the website.
+
+Let's look at the code they used for their app.  See if you can determine why their implementation is vulnerable to command injection.  We'll go over it below.
+
+```php
+<?php
+    if (isset($_GET["mooing"])) {
+        $mooing = $_GET["mooing"];
+        $cow = 'default';
+
+        if(isset($_GET["cow"]))
+            $cow = $_GET["cow"];
+        
+        passthru("perl /usr/bin/cowsay -f $cow $mooing");
+    }
+?>
+```
+In simple terms, the above snippet does the following:
+
+- Checking if the parameter "mooing" is set. If it is, the variable **$mooing** gets what was passed into the input field.
+- Checking if the parameter "cow" is set. If it is, the variable **$cow** gets what was passed through the parameter.
+- The program then executes the function **passthru("perl /usr/bin/cowsay -f $cow $mooing");**. The passthru function simply executes a command in the operating system's console and sends the output back to the user's browser. You can see that our command is formed by concatenating the $cow and $mooing variables at the end of it. Since we can manipulate those variables, we can try injecting additional commands by using simple tricks. If you want to, you can read the docs on passthru() on PHP's website for more information on the function itself.
+
+**Exploiting Command Injection**
+
+Now that we know how the application works behind the curtains, we will take advantage of a bash feature called "inline commands" to abuse the cowsay server and execute any arbitrary command we want. Bash allows you to run commands within commands. This is useful for many reasons, but in our case, it will be used to inject a command within the cowsay server to get it executed.
+
+To execute inline commands, you only need to enclose them in the following format `$(your_command_here)`. If the console detects an inline command, it will execute it first and then use the result as the parameter for the outer command. Look at the following example, which runs `whoami` as an inline command inside an `echo` command:
+
+**Q&A**
+What strange text file is in the website's root directory?drpepper.txt
 
 
+How many non-root/non-service/non-daemon users are there?0
+
+
+What user is this app running as?apache
+
+
+What is the user's shell set as?/sbin/nologin
+
+What version of Alpine Linux is running?3.16.0
+  
