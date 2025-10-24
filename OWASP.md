@@ -3,6 +3,8 @@ The OWASP Top 10 vulnerabilities. Each section explains how the flaw works, why 
 Topics include Broken Access Control, Cryptographic Failures, Injection, Insecure Design, Security Misconfiguration, Outdated Components, Authentication Failures,
 Integrity Failures, Logging & Monitoring Failures, and SSRF.
 
+The room to learn more and practice [here](https://tryhackme.com/room/owasptop102021).
+
 # Broken Access Control
 
 Websites have pages that are protected from regular visitors. For example, only the site's admin user should be able to access a page to manage other users. If a website visitor can access protected pages they are not meant to see, then the access controls are broken.
@@ -147,6 +149,8 @@ In simple terms, the above snippet does the following:
 
 Now that we know how the application works behind the curtains, we will take advantage of a bash feature called "inline commands" to abuse the cowsay server and execute any arbitrary command we want. Bash allows you to run commands within commands. This is useful for many reasons, but in our case, it will be used to inject a command within the cowsay server to get it executed.
 
+
+
 To execute inline commands, you only need to enclose them in the following format `$(your_command_here)`. If the console detects an inline command, it will execute it first and then use the result as the parameter for the outer command. Look at the following example, which runs `whoami` as an inline command inside an `echo` command:
 
 **Q&A**
@@ -162,4 +166,104 @@ What user is this app running as?apache
 What is the user's shell set as?/sbin/nologin
 
 What version of Alpine Linux is running?3.16.0
+
+
+## Insecure Design
+
+Insecure design refers to vulnerabilities which are inherent to the application's architecture. They are not vulnerabilities regarding bad implementations or configurations, but the idea behind the whole application (or a part of it) is flawed from the start. Most of the time, these vulnerabilities occur when an improper threat modelling is made during the planning phases of the application and propagate all the way up to your final app. Some other times, insecure design vulnerabilities may also be introduced by developers while adding some "shortcuts" around the code to make their testing easier. A developer could, for example, disable the OTP validation in the development phases to quickly test the rest of the app without manually inputting a code at each login but forget to re-enable it when sending the application to production.
+
+
+**Insecure Password Resets**
+
+
+A good example of such vulnerabilities occurred on Instagram a while ago. Instagram allowed users to reset their forgotten passwords by sending them a 6-digit code to their mobile number via SMS for validation. If an attacker wanted to access a victim's account, he could try to brute-force the 6-digit code. As expected, this was not directly possible as Instagram had rate-limiting implemented so that after 250 attempts, the user would be blocked from trying further.
+
+
+
+However, it was found that the rate-limiting only applied to code attempts made from the same IP. If an attacker had several different IP addresses from where to send requests, he could now try 250 codes per IP. For a 6-digit code, you have a million possible codes, so an attacker would need 1000000/250 = 4000 IPs to cover all possible codes. This may sound like an insane amount of IPs to have, but cloud services make it easy to get them at a relatively small cost, making this attack feasible.
+
+
+Notice how the vulnerability is related to the idea that no user would be capable of using thousands of IP addresses to make concurrent requests to try and brute-force a numeric code. The problem is in the design rather than the implementation of the application in itself.
+
+**Q&A**
+What is the value of the flag in joseph's account?THM{Not_3ven_c4tz_c0uld_sav3_U!}
+
+
+## Security Misconfiguration
+
+Security Misconfigurations are distinct from the other Top 10 vulnerabilities because they occur when security could have been appropriately configured but was not. Even if you download the latest up-to-date software, poor configurations could make your installation vulnerable.
+
+
+Security misconfigurations include:
+
+- Poorly configured permissions on cloud services, like S3 buckets.
+- Having unnecessary features enabled, like services, pages, accounts or privileges.
+- Default accounts with unchanged passwords.
+- Error messages that are overly detailed and allow attackers to find out more about the system.
+- Not using HTTP security headers.
+
+  
+This vulnerability can often lead to more vulnerabilities, such as default credentials giving you access to sensitive data, XML External Entities (XXE) or command injection on admin pages.
+
+
+
+[OWASP top 10 entry for security Misconfiguration](https://owasp.org/Top10/A05_2021-Security_Misconfiguration/)
+
+**Debugging Interfaces**
+
+Leaving debug features enabled in production is a common security mistake: debug consoles and tools are meant for developers and can run powerful commands, so if they’re left accessible on a live site an attacker can use them to run arbitrary code. For example, a publicly reachable Werkzeug debug console (often at /console or shown when an error occurs) lets anyone enter Python commands — and that kind of exposed debug interface has been linked to real breaches, such as the reported issue around the 2015 Patreon compromise.
+
+
+**Use the Werkzeug console to run the following Python code to execute the ls -l command on the server:**
+
+```py
+import os; print(os.popen("ls -l").read())
+```
+
+
+**Q&A**
+Modify the code to read the contents of the app.py file, which contains the application's source code. What is the value of the secret_flag variable in the source code?THM{Just_a_tiny_misconfiguration}
+
+
+
+## Vulnerable and Outdated Components
+
+
+If a target is running outdated software, an attacker can often exploit known vulnerabilities with very little effort: for example, finding WordPress 4.6 with [WPScan](https://wpscan.com/) can reveal an unauthenticated RCE that already has a public exploit on [Exploit-DB](https://www.exploit-db.com/), meaning an attacker can compromise the site quickly without developing their own exploit—which is why a single missed update can expose a system to many severe, easily automated attacks.First 
+
+
+
+First search Remote Code Execution (RCE) from [Exploit-DB](https://www.exploit-db.com/) then you will find  a .py file like example.then you will run in the terminal:
+```bash
+
+python2 47887.py http://127.0.0.1:80
+
+```
+**Q&A**
+What is the content of the /opt/flag.txt file?THM{But_1ts_n0t_my_f4ult!}
+
+
+
+## Identification and Authentication Failures Practical
+
+Authentication verifies user identity, while session management keeps users logged in by using cookies to track sessions. If attackers exploit flaws in these mechanisms, they can hijack accounts and access sensitive data. Common issues include weak passwords, brute-force vulnerabilities, and predictable session cookies. To mitigate these risks, enforce strong password policies, lock accounts after repeated failed attempts, and implement multi-factor authentication (MFA) to add an extra layer of security.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
