@@ -1,5 +1,7 @@
 # Hydra ![Hydra](hydra.png)
 
+[Room](https://tryhackme.com/room/hydra)
+
 ## What is Hydra?
 Hydra is a brute force online password cracking program, a quick system login password “hacking” tool.
 
@@ -119,4 +121,9 @@ Notes:
 - Start with fewer threads (`-t 4`) to avoid overloading the target and to be less noisy.
 - Use `-V` during testing to see each attempt, and remove it for quieter runs.
 - For web forms, double-check the exact request format (field names, cookies, headers) with the browser DevTools.
-- If the site uses CSRF tokens or dynamic tokens, Hydra might fail — consider programmatic approaches (e.g., custom scripts with `requests`/`curl`) that can fetch tokens per attempt.
+- If the site uses CSRF tokens or dynamic tokens, Hydra might fail — consider programmatic approaches (e.g., custom scripts with `requests`/`curl`) that can fetch tokens per attemp
+
+
+![gobuster](gobuster.png)
+# Gobuster: The Basics
+  
