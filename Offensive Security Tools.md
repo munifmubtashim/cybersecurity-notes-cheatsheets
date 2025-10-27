@@ -124,6 +124,14 @@ Notes:
 - If the site uses CSRF tokens or dynamic tokens, Hydra might fail — consider programmatic approaches (e.g., custom scripts with `requests`/`curl`) that can fetch tokens per attemp
 
 
-![gobuster](gobuster.png)
+
 # Gobuster: The Basics
+
+
+
+
+
+
+
+
   
