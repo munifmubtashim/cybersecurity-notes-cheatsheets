@@ -733,4 +733,143 @@ This BusyBox reverse shell uses Netcat (nc) to connect to the attacker at ATTACK
 
 A database is an organized store of data managed by a DBMS (MySQL, PostgreSQL, SQLite, etc.) that web applications query using SQL to read, write, update, or delete records; SQL injection occurs when an application directly inserts untrusted user input into those SQL queries, letting an attacker change the query’s intent to read or alter data they shouldn’t access. Prevent it by using parameterized queries or prepared statements (which separate code from data), validating and allowlisting inputs, granting the web app minimal database privileges, avoiding string-concatenated SQL, hiding detailed DB errors, and testing only in authorized, isolated labs.
 
+## SQL Injection Vulnerability
+SQL injection (SQLi) is a vulnerability that occurs when an application includes unsanitized user input inside SQL queries. Attackers can manipulate the input to change the intended query logic and execute arbitrary SQL, potentially reading, modifying, or deleting data.
+
+⚠️ Only test SQL injection on systems you own or where you have explicit permission.
+
+Example: Vulnerable Login
+
+A typical login query the application might run:
+```sql
+SELECT * FROM users WHERE username = 'John' AND password = 'Un@detectable444';
+```
+This returns the row for user John only if both username and password match.
+
+How an attacker abuses improper input handling
+
+If the application does not properly validate or escape input, an attacker can inject SQL fragments. Example input to the login form:
+
+Username: John
+
+Password: abc' OR 1=1;-- -
+
+When concatenated into the SQL statement (without proper sanitization), the query becomes:
+
+SELECT * FROM users WHERE username = 'John' AND password = 'abc' OR 1=1;-- -';
+
+Explanation:
+
+The attacker closes the original password literal using the single quote (').
+
+They add OR 1=1 which is always true, so the WHERE clause can evaluate to true even when the password is wrong.
+
+-- - starts a comment in many SQL dialects, causing the rest of the original query to be ignored.
+
+As a result, the query may return at least one row (often the first row), allowing the attacker to bypass authentication.
+
+## Automated exploitation with SQLMap (overview)
+
+Manually finding and exploiting SQLi can be time-consuming. SQLMap is a widely used CLI tool to automate discovery and exploitation of SQL injection vulnerabilities.
+
+Quick tips:
+
+--help lists flags.
+
+--wizard starts an interactive mode that guides beginners.
+
+Always use SQLMap only on systems you have permission to test.
+
+Interactive wizard
+sqlmap --wizard
+
+
+Follow the prompts and provide the target URL or intercepted request.
+
+Typical SQLMap workflow (GET example)
+
+Test a GET URL (vulnerable parameter example):
+
+sqlmap -u "http://sqlmaptesting.thm/search?cat=1"
+
+
+SQLMap will:
+
+Test the connection and charset
+
+Detect injection points and the DBMS
+
+Report injection types (boolean-based, error-based, time-based, UNION, etc.)
+
+Fetch database names:
+
+sqlmap -u "http://sqlmaptesting.thm/search?cat=1" --dbs
+
+
+List tables in a database:
+
+sqlmap -u "http://sqlmaptesting.thm/search?cat=1" -D users --tables
+
+
+Dump table contents:
+
+sqlmap -u "http://sqlmaptesting.thm/search?cat=1" -D users -T thomas --dump
+
+
+SQLMap can also detect password hashes and optionally store/crack them (only with authorization).
+
+POST-based testing (intercepted request)
+
+Intercept the login/POST request (e.g., with Burp Suite), save it as a text file (e.g., intercepted_request.txt), then:
+
+sqlmap -r intercepted_request.txt
+
+
+This lets SQLMap test the POST body parameters and cookies exactly as your browser sent them.
+
+Types of SQL injection SQLMap may report
+
+Boolean-based blind — modify query to return true/false and infer data from responses.
+
+Error-based — intentionally cause DB errors that leak data.
+
+Time-based blind — cause delays (e.g., SLEEP(5)) and infer results from response timing.
+
+UNION-based — combine attacker-controlled SELECT with original query to capture data.
+
+Short checklist for testing (authorized only)
+
+Confirm you have permission to test.
+
+Start with non-destructive enumeration (list DBs, tables, columns).
+
+Avoid destructive commands (DROP, DELETE) unless explicitly authorized.
+
+Respect rate limits and avoid brute-force where it could cause denial-of-service.
+
+Basic mitigations (best practice)
+
+Use parameterized queries / prepared statements — never build SQL by concatenating raw user input.
+
+Use an ORM that parameterizes queries when possible.
+
+Input validation and escaping — validate types, allowed characters, and lengths.
+
+Least privilege for DB accounts — restrict permissions to only what's needed.
+
+Stored procedures are not a substitute for parameterization unless used safely.
+
+WAF / IDS as an additional layer, not the only defense.
+
+Regular testing — authorized pentests, dynamic scanning, and code reviews.
+
+References (for study)
+
+OWASP SQL Injection Cheat Sheet
+
+SQLMap official docs: https://sqlmap.org
+ (for usage and flags)
+
+Database vendor docs for dialect-specific behavior (comment syntax, concat, functions)
+
 
